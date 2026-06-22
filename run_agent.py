@@ -3257,7 +3257,7 @@ class AIAgent:
             # __init__), so the compression model must too — otherwise it
             # cannot summarise a full threshold-sized window of main-model
             # content.  Mirrors the main-model rejection pattern.
-            if aux_context and aux_context < MINIMUM_CONTEXT_LENGTH:
+            if aux_context and aux_context < MINIMUM_CONTEXT_LENGTH and getattr(self, "_aux_compression_context_length_config", None) is None:
                 raise ValueError(
                     f"Auxiliary compression model {aux_model} has a context "
                     f"window of {aux_context:,} tokens, which is below the "
