@@ -1278,3 +1278,19 @@ class TestContextLengthCache:
         with patch("agent.model_metadata._get_context_cache_path", return_value=cache_file):
             save_context_length(model, url, 200000)
             assert get_cached_context_length(model, url) == 200000
+
+
+class TestOrCtxIsPlausiblyWrong:
+    def test_plausibly_wrong_cases(self):
+        from agent.model_metadata import _or_ctx_is_plausibly_wrong
+        
+        # Misreported Kimi models (<= 32K) should be True
+        assert _or_ctx_is_plausibly_wrong(32768, "moonshotai/Kimi-K2.6") is True
+        assert _or_ctx_is_plausibly_wrong(32000, "kimi-k2.5") is True
+        
+        # Misreported MiniMax models (<= 32K) should be True
+        assert _or_ctx_is_plausibly_wrong(32768, "minimax/MiniMax-Text-01") is True
+        
+        # Correctly reported or non-matching models should be False
+        assert _or_ctx_is_plausibly_wrong(128000, "moonshotai/Kimi-K2.6") is False
+        assert _or_ctx_is_plausibly_wrong(32768, "openai/gpt-4o") is False

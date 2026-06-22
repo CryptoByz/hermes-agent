@@ -1101,9 +1101,7 @@ def _or_ctx_is_plausibly_wrong(ctx: int, model: str) -> bool:
       - Any value == 32,768 for Kimi / MiniMax family models
         (the two most frequently misreported families, issues #24268 and #24140)
     """
-    if _or_ctx_is_plausibly_wrong(ctx, model):
-        return True
-    return False
+    return ctx <= 32768 and _model_name_suggests_kimi(model)
 
 
 def _query_local_context_length(model: str, base_url: str, api_key: str = "") -> Optional[int]:
